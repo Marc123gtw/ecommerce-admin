@@ -16,14 +16,13 @@ if (!isOpen) {
 }
 }, [isOpen, onOpen]); 
 
-  return (
-    <div className="p-4">
-      Root Page
+  return null;
+    
       <Link href="/sign-up">
         
       </Link>
-    </div>
-  );
+    
+  
 }
 
 export default SetupPage;
