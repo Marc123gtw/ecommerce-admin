@@ -1,43 +1,50 @@
-import { format } from "date-fns"
+import { format } from "date-fns";
 
-import prismadb from "@/lib/prismadb"
-
-import { BillboardClient } from "./components/client"
-
+import prismadb from "@/lib/prismadb";
+import { BillboardClient } from "./components/client";
 import { CategoryColumn } from "./components/columns";
 
+import { Category, Billboard } from "@prisma/client";
+
+type CategoryWithBillboard = Category & {
+  billboard: Billboard;
+};
 
 const CategoriesPage = async ({
-  params
+  params,
 }: {
-  params: { storeId: string }
+  params: Promise<{ storeId: string }>;
 }) => {
+  const { storeId } = await params; 
+
   const categories = await prismadb.category.findMany({
     where: {
-      storeId: params.storeId
+      storeId,
     },
     include: {
       billboard: true,
     },
     orderBy: {
-      createdAt: 'desc'
-    }
+      createdAt: "desc",
+    },
   });
 
-  const formattedCategories: CategoryColumn[] = categories.map((item: { id: any; name: any; billboard: { label: any; }; createdAt: string | number | Date; }) => ({
-    id: item.id,
-    name: item.name,
-    billboardLabel: item.billboard.label,
-    createdAt: format(item.createdAt, "MMMM do, yyyy")
-  }));
+  const formattedCategories: CategoryColumn[] = categories.map(
+    (item: CategoryWithBillboard) => ({
+      id: item.id,
+      name: item.name,
+      billboardLabel: item.billboard.label,
+      createdAt: format(item.createdAt, "MMMM do, yyyy"),
+    })
+  );
 
-    return (
-        <div className="flex-col">
-        <div className="flex-1 space-y-4 p-8 pt-6">
-          <BillboardClient data={formattedCategories} />
-        </div>
-        </div>
-    )
-}
+  return (
+    <div className="flex-col">
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <BillboardClient data={formattedCategories} />
+      </div>
+    </div>
+  );
+};
 
-export default CategoriesPage
+export default CategoriesPage;
