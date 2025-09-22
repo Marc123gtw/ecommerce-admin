@@ -15,6 +15,7 @@ import axios from "axios";
 import { useState } from "react";
 import { AlertModal } from "@/components/ui/modals/alert-modal";
 
+
 interface CellActionProps {
     data: BillboardColumn
 }
